@@ -1,0 +1,32 @@
+{
+    "posts" : [
+        {
+            "id" : 1,
+            "username" : "pallavigaikwad",
+            "profile" : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+            "post_description" : "Beutiful view with family <3",
+            "post_image" : "https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?cs=srgb&dl=pexels-travis-rupert-379220-1032650.jpg&fm=jpg"
+        },
+        {
+            "id" : 2,
+            "username" : "kavyachavan",
+            "profile":"https://wallpapers.com/images/hd/pretty-profile-pictures-2tkqwa8t2rolierf.jpg",
+            "post_description" : "Beutiful view with family <3",
+            "post_image" : "https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?cs=srgb&dl=pexels-travis-rupert-379220-1032650.jpg&fm=jpg"
+        },
+        {
+            "id" : 3,
+            "username" : "rober-dovney",
+            "profile":"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+            "post_description" : "Beutiful view with family <3",
+            "post_image" : "https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?cs=srgb&dl=pexels-travis-rupert-379220-1032650.jpg&fm=jpg"
+        },
+        {
+            "id" : 4,
+            "username" : "its_just_moment_of_life",
+            "profile":"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+            "post_description" : "Beutiful view with family <3",
+            "post_image" : "https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?cs=srgb&dl=pexels-travis-rupert-379220-1032650.jpg&fm=jpg"
+        }
+    ]
+}

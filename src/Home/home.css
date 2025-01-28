@@ -1,0 +1,505 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Platypi", serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+#body {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #fbffdc;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#nopost {
+    position: absolute;
+    top: 50%;
+    left: 42%;
+}
+
+#start-loader,
+#title {
+    font-size: 50px;
+    color: #527640;
+    animation: scaleAnimation 1.5s infinite;
+    z-index: 2;
+}
+
+#loader {
+    width: 100px;
+    height: 100px;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #fbffdc;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+#side-section {
+    width: 17%;
+}
+
+#side-section,
+.middle-section,
+#last-section {
+    box-shadow: 2px 2px 2px #82b14fa2;
+}
+
+
+#last-section {
+    width: 25%;
+}
+
+#list {
+    list-style: none;
+}
+
+.list-item {
+    color: #527640;
+    text-align: justify;
+    margin: 40px 0 0 50px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#logo {
+    font-size: 30px;
+    margin-top: 20px;
+}
+
+#post-btn {
+    width: 20%;
+    padding: 6px;
+    background-color: #72aad9;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-size: 15px;
+    margin-left: 17.1rem;
+    margin-bottom: 10px;
+    margin-top: 0.8rem;
+
+}
+
+#logout,
+#settings {
+    padding: 10px;
+    margin-left: 40px;
+    font-size: 18px;
+    width: 50%;
+    border: none;
+    border-radius: 30px;
+    background-color: red;
+    color: white;
+    margin-bottom: 0;
+}
+
+#settings {
+    background-color: gray;
+}
+
+/*--------------------- Middle Section ---------------------- */
+
+.middle-section {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-main,
+.profile-main {
+    margin-top: 50px;
+    overflow: auto;
+}
+
+#postList {
+    margin-top: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(130, 177, 79, 0.635);
+    border-radius: 10px;
+}
+
+#card {
+    width: 90%;
+    min-height: 100px;
+    border: 1px solid #82b14fa2;
+    background-color: #86af5949;
+    margin: 15px auto;
+    padding: 10px 10px 2px 5px;
+    border-radius: 10px;
+
+}
+
+#card #heading #profile {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgb(68, 68, 68);
+}
+
+#content {
+    margin-left: 58px;
+    color: rgb(110, 110, 110);
+}
+
+#content #post {
+    width: 100%;
+    height: 20rem;
+    margin-top: 10px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+#feature {
+    width: 100%;
+    padding: 5px;
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+}
+
+#feature .icon {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #527640;
+}
+
+#feature .numbers {
+    font-size: 15px;
+    margin: 4px;
+}
+
+#for-you {
+    height: 40px;
+    width: 50.5%;
+    border: 2px solid #82b14fa2;
+    padding-top: 10px;
+    position: fixed;
+    top: 0;
+    background-color: #fbffdc;
+    margin-left: 15.9rem;
+}
+
+#for-you-span,
+#profile-span {
+    border-bottom: 4px solid #527640;
+    font-size: 18px;
+    color: #527640;
+    font-weight: 800;
+    border-radius: 3px;
+    margin-right: 21rem;
+}
+
+/* ------------- Tranding Section ----------- */
+#last-section {
+    display: flex;
+    flex-direction: column;
+}
+
+#tranding-section {
+    border: 2px solid grey;
+    margin: 30px;
+    padding: 0 20px 20px 20px;
+    overflow: auto;
+    background-color: #fbffdc;
+    height: 100vh;
+}
+
+#single-trend {
+    margin: 15px;
+}
+
+#trending-heading {
+    color: #527640;
+    position: absolute;
+    background-color: #fbffdc;
+    padding: 15px 90px 10px 5px;
+    font-size: 25px;
+}
+
+#topic {
+    font-size: 15px;
+    color: grey;
+}
+
+#trend {
+    margin-top: 80px;
+}
+
+#trending-title {
+    font-size: 18px;
+    color: #4a693a;
+}
+
+#post_count {
+    font-size: 13px;
+    color: grey;
+}
+
+/*  ------------ Profile Section ----------------- */
+
+#update {
+    margin-left: 350px;
+}
+
+#update i {
+    margin-left: 20px;
+    color: #4a693a;
+    cursor: pointer;
+}
+
+#profile-account {
+    width: 100%;
+}
+
+#profile-account #profile_picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-left: 290px;
+    margin-top: 20px;
+}
+
+#profile-section {
+    height: 12rem;
+
+}
+
+.profile-main {
+    margin-top: 100px;
+}
+
+#edit {
+    border: 2px solid #527640;
+    width: 120px;
+    margin: 10px auto;
+    color: #527640;
+    border-radius: 30px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#profile-span {
+    margin-right: 45.5rem;
+    margin-top: 14rem;
+}
+
+i {
+    cursor: pointer;
+}
+
+/* --------------- Explore Section----------------- */
+
+#search {
+    width: 80%;
+    border-radius: 30px;
+    outline: none;
+    border: none;
+    margin: 15px 25px -20px 75px;
+    padding: 10px 10px 10px 15px;
+    box-shadow: 2px 5px 5px #527640;
+
+}
+
+/* ---------------- Post Data ----------------------- */
+
+#post-body {
+    width: 100%;
+    height: 100vh;
+    border: 1px solid black;
+    background-color: rgba(0, 0, 0, 0.329);
+    position: absolute;
+}
+
+#postData {
+    width: 40%;
+    border: 2px solid #5d814b;
+    margin: 90px auto;
+    padding: 30px;
+    line-height: 50px;
+    border-radius: 15px;
+    box-shadow: 2px 5px 5px #527640;
+    background-color: #d0f1bf;
+    height: 300px;
+    position: relative;
+}
+
+#description {
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 15px;
+    outline: none;
+}
+
+#Post_image {
+    border-bottom: none;
+}
+
+#postBtn {
+    padding: 10px;
+    width: 80px;
+    margin-left: -40px;
+    border-radius: 30px;
+    border: none;
+    background-color: #72aad9;
+    color: white;
+    font-size: 15px;
+}
+
+#label_cross {
+    position: absolute;
+    top: 10px;
+    left: 550px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.empty-post {
+    text-align: center;
+    color: rgb(95, 72, 10);
+}
+
+/* ---------- Comment Section --------------- */
+
+#container-comment {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -10px;
+}
+
+#comment-box {
+    position: relative;
+    width: 90%;
+    border: 1px solid #4a693a;
+    border-radius: 10px;
+    padding: 0 20px 20px 20px;
+    line-height: 70px;
+    background-color: #EADCC2;
+}
+
+#comment {
+    font-size: 17px;
+    background: transparent;
+}
+
+#profile-input {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    position: absolute;
+    bottom: 10px;
+}
+
+#heading-comment {
+    margin-bottom: 30px;
+}
+
+.comment-profile,
+.comment-account-profile {
+    width: 4rem;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #4a693a;
+    margin-right: 15px;
+}
+
+.comment-account-profile {
+    width: 2.5rem;
+    height: 40px;
+}
+
+#comment-btn {
+    padding: 7px 2px 0 0;
+    background-color: #5d814ba4;
+    font-size: 25px;
+    color: #fbffdc;
+    border: none;
+    margin-left: 20px;
+    border: 1px solid #4a693a;
+    border-radius: 50%;
+    width: 4rem;
+}
+
+#singleComment {
+    margin-top: -50px;
+    margin-bottom: 5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+#comment-account {
+    position: absolute;
+    top: 0;
+    left: 3rem;
+}
+
+#p1 {
+    font-weight: 900;
+    margin-bottom: 15px;
+    margin-top: -25px;
+    font-size: 15px;
+}
+
+#p2 {
+    margin-top: -40px;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+
+/* Animation */
+
+@keyframes scaleAnimation {
+    0% {
+        transform: scale(0.8);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

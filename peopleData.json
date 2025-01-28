@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "kavyachavan@gmail.com",
+      "password": "Kavya@123"
+    },
+    {
+      "id": "2",
+      "email": "pallavigaikwad@gmail.com",
+      "password": "Pallavi@24"
+    },
+    {
+      "id": "3",
+      "email": "pallavigaikwad263@gvb.hb",
+      "password": "Pallavi@123"
+    },
+    {
+      "id": "5",
+      "email": "prashant@gmail.com",
+      "password": "Prashant@14"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+/* Container Styling */
+.user-list-group {
+    width: 30%;
+    height: 70vh;
+    border: 1px solid black;
+    position: absolute;
+    margin: 7% 35%;
+    background-color: #ecd2ab;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgb(84, 83, 83);
+}
+
+.heading {
+    color: #532200;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Users Card Styling */
+.user-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+}
+
+.fa-xmark {
+    position: absolute;
+    left: 93%;
+    top: 10px;
+    font-size: 20px;
+    color: grey;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Users Info Styling */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #532200;
+    /* Accent border */
+    object-fit: cover;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #532200;
+    /* Dark text color */
+}
+
+/* Add Button Styling */
+.add-button {
+    background-color: #A38A6C;
+    /* Button background color */
+    color: #FFFFFF;
+    /* Text color for contrast */
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-friends {
+    background-color: #532200 !important;
+    margin: 20px 35%;
+    width: 27%;
+}
+
+.add-friends:hover {
+    color: #CCB28F !important;
+}
+
+.add-button:hover {
+    background-color: #CCB28F;
+    color: #532200;
+    transform: translateY(-2px);
+}
+
+.add-button:active {
+    background-color: #A38A6C;
+    /* Active state color */
+    transform: translateY(0);
+}

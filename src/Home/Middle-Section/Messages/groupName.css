@@ -1,0 +1,69 @@
+/* Container for the group name input */
+.group-name-container {
+    position: absolute;
+    background-color: #EFCFA0;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    margin: 10% 35%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading style */
+.group-name-container .heading {
+    color: #532200;
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Input field style */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #CCB28F;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    color: #532200;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+/* Input field focus effect */
+.input-field:focus {
+    border-color: #532200;
+    outline: none;
+}
+
+/* Submit button style */
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #CCB28F;
+    color: #532200;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Submit button hover effect */
+.submit-button:hover {
+    background-color: #CCB28F;
+    color: #fff;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 500px) {
+    .group-name-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .submit-button {
+        font-size: 14px;
+    }
+}
