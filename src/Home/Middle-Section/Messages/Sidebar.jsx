@@ -51,8 +51,8 @@ function Sidebar({ users, url, onSelectUser, handleGroupSelect }) {
                                 {
                                     group &&
                                     group?.map((item) => (
-                                        (item?.user_ids && JSON.parse(item?.user_ids).includes(loginUser?.id.toString()) || item?.admin_id == loginUser?.id) ?
-                                            <li key={item?.id} onClick={() => handleGroupSelect(item?.group_name)} className='chat-user'>
+                                        (item?.user_ids && JSON.parse(item?.user_ids).includes(loginUser?.id) || item?.admin_id == loginUser?.id) ?
+                                            <li key={item?.id} onClick={() => handleGroupSelect(item?.id)} className='chat-user'>
                                                 <img src={`${url}/public/profile/${item?.profile_image}`} alt={item?.group_name} className="user-dp" />
                                                 <div className='user-name'>{item?.group_name}</div>
                                             </li> : ""

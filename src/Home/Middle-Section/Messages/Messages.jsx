@@ -11,9 +11,10 @@ const Messages = ({ loginUser, receiverUser, users, onSelectUser, setCurrChatUse
 
     const [currGroup, setCurrGroup] = useState();
 
-    const handleGroupSelect = (groupName) => {
+    const handleGroupSelect = (group_id) => {
+        console.log("15:", group_id);
         setSelectGroup(true);
-        axios.get(`${url}/group-chat/${groupName}`).then((response) => {
+        axios.get(`${url}/group-chat/${group_id}`).then((response) => {
             console.log("Response 27::", response.data);
             setCurrGroup(response.data);
         }).catch((err) => console.log(err))

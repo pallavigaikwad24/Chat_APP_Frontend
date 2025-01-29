@@ -80,6 +80,7 @@
     border-radius: 5px;
     width: 300px;
     text-align: center;
+    position: relative;
 }
 
 .popup-content .close {
@@ -125,7 +126,7 @@
     font-size: 14px;
     line-height: 1.4;
     word-wrap: break-word;
-    margin: 15px 0;
+    margin: 20px 0;
 }
 
 /* Sent message styling */
@@ -420,10 +421,22 @@ textarea::placeholder {
     font-weight: bold;
 }
 
-.menu {
+.menu.senderReply {
     position: absolute;
     top: -30px;
     right: 100%;
+    width: 120px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 1;
+}
+
+.menu.receiverReply {
+    position: absolute;
+    top: -30px;
+    left: 100%;
     width: 120px;
     background: white;
     border-radius: 12px;
@@ -486,6 +499,10 @@ textarea::placeholder {
     border-top-left-radius: 15px;
     margin: 0;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
 }
 
 .replay_msg.receive {
@@ -494,8 +511,56 @@ textarea::placeholder {
     border-top-right-radius: 15px;
     margin: 0;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
 }
 
 .emoji-style {
+    width: 20%;
     font-size: 15px;
+}
+
+.emoji-style-single {
+    padding: 2px;
+    font-size: 15px;
+    position: absolute;
+    right: 10px;
+    bottom: -15px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.sender_info {
+    width: 110px;
+    border: 1px solid rgb(255, 255, 255);
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #cbb4a0;
+    color: black;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.file-msg-input {
+    border: 2px solid grey;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.file-file-style.sendFileMsg {
+    padding: 2px 4px 6px 4px;
+    text-align: right;
+}
+
+.file-file-style.receiverFileMsg {
+    padding: 2px 4px 6px 4px;
+    text-align: left;
+}
+
+.date-style {
+    color: black;
+    text-align: left;
 }

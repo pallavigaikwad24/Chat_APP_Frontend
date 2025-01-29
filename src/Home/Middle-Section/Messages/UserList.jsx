@@ -6,7 +6,7 @@ function UserList({ loginUser, users, url, setIsDisplay, setUserSelected, setIsN
     const [isSelect, setIsSelected] = useState({});
     const [userList, setUserList] = useState();
 
-    const handleSelectUsers = (index, username) => {
+    const handleSelectUsers = (index, user_id) => {
         setIsSelected((prevState) => ({
             ...prevState,
             [index]: !prevState[index], // Toggle the state for the specific user
@@ -14,7 +14,7 @@ function UserList({ loginUser, users, url, setIsDisplay, setUserSelected, setIsN
 
         setUserList((prevState) => ({
             ...prevState,
-            [index]: username
+            [index]: user_id
         }))
 
     }
@@ -24,7 +24,7 @@ function UserList({ loginUser, users, url, setIsDisplay, setUserSelected, setIsN
 
         const result = selectedValue.map((item) => {
             const userSelected = Object.entries(userList).find((user) => user[0] == item[0]);
-            return userSelected[0];
+            return userSelected[1];
         })
         setUserSelected(result);
         result.length > 0 ? setIsDisplay(false) : setIsDisplay(true);
@@ -45,7 +45,7 @@ function UserList({ loginUser, users, url, setIsDisplay, setUserSelected, setIsN
                                 <img src={`${url}/public/profile/${user.profile_img}`} alt="Users Avatar" className="user-avatar" />
                                 <div className="user-name">{user?.username}</div>
                             </div>
-                            <button className="add-button" onClick={() => handleSelectUsers(index, user?.username)}>{isSelect[index] ? (
+                            <button className="add-button" onClick={() => handleSelectUsers(index, user?.id)}>{isSelect[index] ? (
                                 <i className="fa-solid fa-check"></i>
                             ) : (
                                 "Select"
