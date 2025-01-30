@@ -61,7 +61,7 @@ function Signup() {
 
   return (
     <>
-      <div className="body">
+      <div className="body-login">
         <Toaster
           position="top-center"
           reverseOrder={false}

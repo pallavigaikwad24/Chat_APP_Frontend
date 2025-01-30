@@ -65,7 +65,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                 console.error("Connection error:", err.message);
             });
         }
-    }, [receiverUser]);
+    }, [receiverUser, url]);
 
 
     const handleSendMessage = () => {
@@ -106,7 +106,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
     };
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
+        setSelectedFile([...e.target.files]);
     };
 
     const handleFileMsgChange = (e) => {
@@ -116,19 +116,26 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
     const handleSendFile = () => {
         if (selectedFile) {
             const formData = new FormData();
-            formData.append("fileInput", selectedFile);
+            selectedFile.forEach((file) => {
+                formData.append("fileInput", file);  // 'files' is the field name
+            });
+
+            const filename = selectedFile.map((select) => select.name);
+            const file_type = selectedFile.map((select) => select.type);
+            const file_url = selectedFile.map((select) => select.name);
+            const file_size = selectedFile.map((select) => select.size);
 
             const postData = {
                 receiver: receiverUser?.username,
                 content: fileMsgState,
-                file_type: selectedFile.type, filename: selectedFile.name,
-                file_url: selectedFile.name, file_size: selectedFile.size
+                file_type: file_type, filename: filename, file_url: file_url,
+                file_size: file_size
             }
 
             const fileMsg = {
                 content: fileMsgState, sender_id: loginUser?.id, contentType: "file",
-                file_type: selectedFile.type, filename: selectedFile.name, file_url: selectedFile.name,
-                file_size: selectedFile.size, createdAt: "now"
+                file_type: file_type, filename: filename, file_url: file_url,
+                file_size: file_size, createdAt: "now"
             }
 
             if (replayMsg) {
@@ -138,6 +145,13 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                 axios.post(`${url}/reply-chat`, postData)
                     .then((response) => {
                         fileMsg['id'] = response.data.id;
+                        formData.append("newFile_id", response.data.id);
+                        axios.post(`${url}/file-input-message/${loginUser?.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            .then((response) => {
+                                console.log("Response::", selectedFile.name);
+                                console.log("Response::", response);
+                                socket.current.emit("file_message", fileMsg);
+                            }).catch((err) => console.log("Error::", err));
                         socket.current.emit("file_message", fileMsg);
                     })
                     .catch((err) => console.log("Error:", err));
@@ -146,16 +160,18 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                 axios.post(`${url}/add-chat`, postData)
                     .then((response) => {
                         fileMsg['id'] = response.data.id;
+                        formData.append("newFile_id", response.data.id);
+                        axios.post(`${url}/file-input-message/${loginUser?.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            .then((response) => {
+                                console.log("Response::", selectedFile.name);
+                                console.log("Response::", response);
+                                socket.current.emit("file_message", fileMsg);
+                            }).catch((err) => console.log("Error::", err));
                     })
                     .catch((err) => console.log("Error:", err));
             }
 
-            axios.post(`${url}/file-input-message/${loginUser?.id}`, formData)
-                .then((response) => {
-                    console.log("Response::", selectedFile.name);
-                    console.log("Response::", response);
-                    socket.current.emit("file_message", fileMsg);
-                }).catch((err) => console.log("Error::", err));
+
             setFilePopupVisible(false);
         }
 
@@ -163,47 +179,66 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
     };
 
     const handleImageChange = (e) => {
-        if (e.target.files[0]) {
+        if (e.target.files) {
+            const selectedFile = [...e.target.files]
             const formData = new FormData();
-            formData.append("fileInput", e.target.files[0]);
+            // formData.append("fileInput", selectedFile);
+            selectedFile.forEach((file) => {
+                formData.append("fileInput", file);  // 'files' is the field name
+            });
+
+            const filename = selectedFile.map((select) => select.name);
+            const file_type = selectedFile.map((select) => select.type);
+            const file_url = selectedFile.map((select) => select.name);
+            const file_size = selectedFile.map((select) => select.size);
 
             const imgMsg = {
                 content: e.target.files[0].name, sender_id: loginUser?.id, contentType: "img",
-                file_type: e.target.files[0].type, filename: e.target.files[0].name, file_url: e.target.files[0].name,
-                file_size: e.target.files[0].size, createdAt: "now"
+                file_type: file_type, filename: filename, file_url: file_url,
+                file_size: file_size, createdAt: "now"
             };
 
             const postData = {
                 sender: loginUser?.username,
                 receiver: receiverUser?.username,
                 content: null,
-                file_type: e.target.files[0].type, filename: imgMsg.content, file_url: imgMsg.content,
-                file_size: e.target.files[0].size
+                file_type: file_type, filename: filename, file_url: file_url,
+                file_size: file_size
             }
             if (replayMsg) {
                 postData["reply_to_message_id"] = replayMsg.id;
                 imgMsg['reply_to_message_id'] = replayMsg.id;
 
                 axios.post(`${url}/reply-chat`, postData)
-                    .then((response) => console.log("Replay response:", response))
+                    .then((response) => {
+                        console.log("Replay response:", response);
+                        formData.append("newFile_id", response.data.id);
+                        axios.post(`${url}/file-input-message/${loginUser?.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            .then((response) => {
+                                console.log("Response from file 128::", response);
+                                socket.current.emit("img_message", imgMsg);
+                            }).catch((err) => console.log("Error::", err))
+                    })
                     .catch((err) => console.log("Error:", err));
 
                 setMessage("");
 
                 setReplayMsg(null);
             } else {
-                axios.post(`${url}/add-chat`, postData)
+                axios.post(`${url}/add-chat`, postData,)
                     .then((response) => {
                         imgMsg['id'] = response.data.id;
+                        formData.append("newFile_id", response.data.id);
+                        axios.post(`${url}/file-input-message/${loginUser?.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            .then((response) => {
+                                console.log("Response from file 128::", response);
+                                socket.current.emit("img_message", imgMsg);
+                            }).catch((err) => console.log("Error::", err))
                     })
                     .catch((err) => console.log("Error:", err));
             }
 
-            axios.post(`${url}/file-input-message/${loginUser?.id}`, formData)
-                .then((response) => {
-                    console.log("Response from file 128::", response);
-                    socket.current.emit("img_message", imgMsg);
-                }).catch((err) => console.log("Error::", err))
+
         }
     }
 
@@ -286,24 +321,34 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                                     </div>
                                 </div>
                                 {
-                                    msg?.file_type == null && msg?.content ? <p className='text-msg'>{msg?.content}</p> : msg?.file_type.startsWith("image", 0) == false ?
+                                    msg?.file_type == null && msg?.content ? <p className='text-msg'>{msg?.content}</p> : msg?.file_type?.every(file => file.startsWith("image")) == false ?
                                         <div>
-                                            <div className="received-file">
-                                                <div className="file-name">{msg.filename}</div>
-                                                <a href={`${url}/download-file/${msg.id}`} className="download-btn"><i className="fa-solid fa-download"></i></a>
-                                            </div>
+                                            {
+                                                msg?.filename.map((file, indx) => (
+                                                    <div key={indx} className="received-file">
+                                                        <div className="file-name">{file}</div>
+                                                        <a href={`${url}/download-file/${msg.id}/${file}`} className="download-btn"><i className="fa-solid fa-download"></i></a>
+                                                    </div>
+                                                ))
+                                            }
                                             <div className={`file-file-style ${msg?.sender_id === loginUser?.id ? "sendFileMsg" : "receiverFileMsg"}`}>{msg?.content}</div>
                                         </div>
-                                        : msg?.file_type.startsWith("image", 0) == true ? <div className='img-div'> <a href={`${url}/download-file/${msg.id}`}><i className="fa-solid fa-download img-download"></i></a>
-                                            {
-                                                msg?.sender_id === loginUser?.id ?
-                                                    <a href={`${url}/public/uploads/fileSend/${loginUser?.id}/${msg?.filename}`} target='_blank'>
-                                                        <img src={`${url}/public/uploads/fileSend/${loginUser?.id}/${msg?.filename}`} alt="img" /></a>
-                                                    : <a href={`${url}/public/uploads/fileSend/${receiverUser?.id}/${msg?.filename}`} target='_blank'>
-                                                        <img src={`${url}/public/uploads/fileSend/${receiverUser?.id}/${msg?.filename}`} alt="img" /></a>
-                                            }
-                                        </div> : ""}
-                                {console.log("Message:", msg)}
+                                        : msg?.file_type?.every(file => file.startsWith("image")) == true ?
+                                            msg?.filename.map((img, inndx) => (
+                                                <div key={inndx} className='img-div'>
+                                                    <a href={`${url}/download-file/${msg.id}`}><i className="fa-solid fa-download img-download"></i>
+                                                    </a>
+                                                    {
+                                                        msg?.sender_id === loginUser?.id ?
+                                                            <a href={`${url}/public/uploads/fileSend/${loginUser?.id}/${msg.id}/${img}`} target='_blank'>
+                                                                <img src={`${url}/public/uploads/fileSend/${loginUser?.id}/${msg.id}/${img}`} alt="img" /></a>
+                                                            : <a href={`${url}/public/uploads/fileSend/${receiverUser?.id}/${msg.id}/${img}`} target='_blank'>
+                                                                <img src={`${url}/public/uploads/fileSend/${receiverUser?.id}/${msg.id}/${img}`} alt="img" /></a>
+                                                    }
+                                                </div>
+                                            ))
+
+                                            : ""}
                                 <div className="date-style">
                                     {
                                         msg?.createdAt == "now" ? new Intl.DateTimeFormat("en-IN", {
@@ -342,7 +387,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                         onChange={(e) => setMessage(e.target.value)}
                     ></textarea>
                     <i className="fa-solid fa-image imgfile" onClick={() => document.querySelector("#imgfile").click()}></i>
-                    <input type="file" name="imageFile" id="imgfile" hidden accept="image/*" onChange={handleImageChange} />
+                    <input type="file" name="imageFile" id="imgfile" hidden accept="image/*" onChange={handleImageChange} multiple />
                     <i className="fa-solid fa-paperclip" style={{ cursor: "pointer" }} onClick={() => setFilePopupVisible(true)}></i>
                     <button className="btn btn-primary" id="send-btn" type="button" onClick={handleSendMessage}>Send</button>
                 </div>
@@ -359,7 +404,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                                 <label htmlFor="fileInput" className="custom-file-label">
                                     <i className="fas fa-upload"></i> Select File
                                 </label>
-                                <input type="file" id="fileInput" className="file-input" name="fileInput" onChange={handleFileChange} />
+                                <input type="file" id="fileInput" className="file-input" name="fileInput" onChange={handleFileChange} multiple />
                                 <input type="text" id="fileMsgInput" className="file-msg-input" name="fileMsgInput" onChange={(e) => handleFileMsgChange(e)} placeholder='write message..' />
                             </div>
                             <div id="fileDetails" className="file-details">

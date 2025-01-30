@@ -14,8 +14,10 @@ function Login() {
   useEffect(() => {
     if (localStorage.getItem("login")) {
       navigate(`/messages`);
+    } else {
+      navigate('/login');
     }
-  }, []);
+  }, [navigate]);
 
 
   const errorMsgFun = (type) => {
@@ -59,7 +61,7 @@ function Login() {
 
   return (
     <>
-      <div className="body">
+      <div className="body-login">
         <h3 className="heading">Login</h3>
         <form className="login-page" onSubmit={funSubmit}>
           <input

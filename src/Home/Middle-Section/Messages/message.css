@@ -3,6 +3,7 @@
     flex-direction: row;
     height: 90vh;
     overflow: hidden;
+    width: 100%;
 }
 
 .section.chat__section {

@@ -33,7 +33,8 @@ function MessageMain() {
             setUsers(response.data);
         }).catch((err) => {
             console.log(err);
-            navigate("/login");
+            if (err.request.status == 401)
+                navigate("/login");
         });
     }, [url, navigate])
 

@@ -1,6 +1,5 @@
 
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import HomeLogin from './HomeLogin.jsx';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from './LoginPage/Login.jsx';
 import Signup from './SignUp/Signup.jsx';
 import ForgetPassword from './ForgetPasswprd/ForgetPassword.jsx';
@@ -13,7 +12,7 @@ function RoutingWay() {
     const router = createBrowserRouter([
         {
             path: '/',
-            element: <HomeLogin />
+            element: <Navigate to="/login" replace />
         },
         {
             path: '/login',
