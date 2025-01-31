@@ -13,9 +13,9 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
     const [replayMsg, setReplayMsg] = useState(null);
     const [emojiView, setEmojiView] = useState(null);
     const [emoji, setEmoji] = useState([]);
-    const [singleEmoji, setSingleEmoji] = useState(null);
-    const [emojiMsg, setEmojiMsg] = useState(null);
     const [fileMsgState, setFileMsgState] = useState(null);
+    const [reactions, setReactions] = useState({});
+
     const socket = React.useRef();
 
     useEffect(() => {
@@ -23,7 +23,8 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
             ...message,
             sender_name: currGroup?.User?.username,
         }));
-        setMessageList(updatedMessages);
+        const sortedMessages = updatedMessages?.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        setMessageList(sortedMessages);
 
         axios.get(`${url}/get-login-user`).then((response) => {
             console.log("Response from login Users:", response.data);
@@ -54,10 +55,23 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
                 socket.current.emit('join_group', { groupId: currGroup?.id });
             });
 
+            // socket.current.on("receive_message", (data) => {
+            //     console.log("Receive msg 34::", data);
+            //     setMessageList((list) => [...(list || []), data]);
+            // });
+
             socket.current.on("receive_message", (data) => {
                 console.log("Receive msg 34::", data);
-                setMessageList((list) => [...(list || []), data]);
+                if (data.reaction) {
+                    setReactions((prev) => ({
+                        ...prev,
+                        [data.message_id]: { code: data.reaction, indx: data.index }
+                    }));
+                } else {
+                    setMessageList((list) => [...(list || []), data]);
+                }
             });
+
 
             socket.current.on("connect_error", (err) => {
                 console.error("Connection error:", err.message);
@@ -82,13 +96,17 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
 
         if (replayMsg) {
             postData['reply_to_message_id'] = replayMsg.id;
+            newMessage['reply_to_message_id'] = replayMsg.id;
 
             axios.post(`${url}/reply-chat`, postData)
-                .then((response) => console.log("Replay response:", response))
+                .then((response) => {
+                    console.log("Replay response:", response);
+                    newMessage['id'] = response.data.id;
+                    socket.current.emit("send_message", newMessage);
+
+                })
                 .catch((err) => console.log("Error:", err));
 
-            newMessage['reply_to_message_id'] = replayMsg.id;
-            socket.current.emit("send_message", newMessage);
             setMessage("");
 
             setReplayMsg(null);
@@ -96,6 +114,7 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
             axios.post(`${url}/add-group-chat`, postData)
                 .then((response) => {
                     console.log("add Group chat:", response);
+                    newMessage['id'] = response.data.id;
                     socket.current.emit("send_message", newMessage);
                     setMessage("");
                 })
@@ -180,6 +199,7 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
         }
 
         setSelectedFile("");
+        setFileMsgState("");
     };
 
     const handleImageChange = (e) => {
@@ -271,15 +291,24 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
     }
 
     const addReaction = (index, em, message) => {
-        setEmojiMsg(index);
+        setReactions((prev) => ({
+            ...prev,
+            [message.id]: { code: em.code, indx: index }
+        }))
         setEmojiView(null);
+
+        const newReaction = {
+            message_id: message.id,
+            sender_id: loginUser?.id,
+            reaction: em.code,
+        };
+
+        socket.current.emit("react_to_message", newReaction);
 
         axios.post(`${url}/add-reaction`, { message_id: message.id, reaction: JSON.stringify({ name: em.name, code: em.code }) }).then((response) => {
             console.log("emoji single response:", response.data);
-            setSingleEmoji(response.data);
         }).catch((err) => console.log(err));
     }
-
     const invisible = () => {
         setOption(null);
     }
@@ -367,9 +396,11 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
                                         }
                                     </div>
                                     {
-                                        singleEmoji && emojiMsg == index ?
-                                            <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(singleEmoji?.reaction)?.code}`)}</div> :
-                                            msg.MessageReaction ? <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(msg.MessageReaction?.reaction)?.code}`)}</div> : ''
+                                        msg.id && reactions[msg.id] ? (
+                                            <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${reactions[msg.id].code || msg.reaction}`)}</div>
+                                        ) : msg.MessageReaction ? (
+                                            <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(msg.MessageReaction?.reaction)?.code}`)}</div>
+                                        ) : ''
                                     }
                                 </div>
                         })
@@ -393,7 +424,7 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
                         onChange={(e) => setMessage(e.target.value)}
                     ></textarea>
                     <i className="fa-solid fa-image imgfile" onClick={() => document.querySelector("#imgfile").click()}></i>
-                    <input type="file" name="imageFile" id="imgfile" hidden accept="image/*" onChange={handleImageChange} />
+                    <input type="file" name="imageFile" id="imgfile" hidden accept="image/*" onChange={handleImageChange} multiple />
                     <i className="fa-solid fa-paperclip" style={{ cursor: "pointer" }} onClick={() => setFilePopupVisible(true)}></i>
                     <button className="btn btn-primary" id="send-btn" type="button" onClick={handleSendMessage}>Send</button>
                 </div>
@@ -414,7 +445,7 @@ function GroupMessage({ url, setSelectGroup, currGroup, users }) {
                                 <input type="text" id="fileMsgInput" className="file-msg-input" name="fileMsgInput" onChange={handleFileMsgChange} placeholder='write message..' />
                             </div>
                             <div id="fileDetails" className="file-details">
-                                {selectedFile ? selectedFile.name : "No file chosen"}
+                                {selectedFile ? `${selectedFile?.length} Files` : "No file chosen"}
                             </div>
                             <button id="sendFileBtn" className="send-btn" onClick={handleSendFile}>Send</button>
                         </div>

@@ -13,9 +13,8 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
     const [replayMsg, setReplayMsg] = useState(null);
     const [emojiView, setEmojiView] = useState(null);
     const [emoji, setEmoji] = useState([]);
-    const [singleEmoji, setSingleEmoji] = useState(null);
-    const [emojiMsg, setEmojiMsg] = useState(null);
     const [fileMsgState, setFileMsgState] = useState(null);
+    const [reactions, setReactions] = useState({});
 
     const socket = React.useRef();
 
@@ -38,7 +37,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
 
     useEffect(() => {
         axios.get(`${url}/all-reactions`).then((response) => {
-            console.log("emoji response:", response.data);
+            console.log("Reactions 41:", response.data);
             setEmoji(response.data);
         }).catch((err) => console.log(err));
     }, [url]);
@@ -58,7 +57,15 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
 
             socket.current.on("receive_message", (data) => {
                 console.log("Receive msg 34::", data);
-                setMessageList((list) => [...list, data]);
+                if (data.reaction) {
+                    setReactions((prev) => ({
+                        ...prev,
+                        [data.message_id]: { code: data.reaction, indx: data.index }
+                    }));
+                } else {
+
+                    setMessageList((list) => [...list, data]);
+                }
             });
 
             socket.current.on("connect_error", (err) => {
@@ -77,7 +84,8 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
         }
 
         const newMessage = {
-            content: message, sender_id: loginUser?.id, contentType: "text", createdAt: "now"
+            content: message, sender_id: loginUser?.id, contentType: "text", createdAt: "now",
+            reaction: null
         };
 
         if (replayMsg) {
@@ -85,19 +93,26 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
             newMessage['reply_to_message_id'] = replayMsg.id;
 
             axios.post(`${url}/reply-chat`, postData)
-                .then((response) => console.log("Replay response:", response))
+                .then((response) => {
+                    console.log("Replay response:", response);
+                    newMessage['id'] = response.data.id;
+                    socket.current.emit("send_message", newMessage);
+                })
                 .catch((err) => console.log("Error:", err));
 
-            socket.current.emit("send_message", newMessage);
             setMessage("");
 
             setReplayMsg(null);
         } else {
             axios.post(`${url}/add-chat`, postData)
-                .then((response) => console.log("Response:", response))
+                .then((response) => {
+                    console.log("Response 98:", response.data);
+                    newMessage['id'] = response.data.id;
+                    socket.current.emit("send_message", newMessage);
+                })
                 .catch((err) => console.log("Error:", err));
 
-            socket.current.emit("send_message", newMessage);
+            console.log("Send Message:", newMessage);
             setMessage("");
         }
         if (messageAreaRef.current) {
@@ -135,7 +150,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
             const fileMsg = {
                 content: fileMsgState, sender_id: loginUser?.id, contentType: "file",
                 file_type: file_type, filename: filename, file_url: file_url,
-                file_size: file_size, createdAt: "now"
+                file_size: file_size, createdAt: "now", reaction: null
             }
 
             if (replayMsg) {
@@ -176,6 +191,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
         }
 
         setSelectedFile("");
+        setFileMsgState("");
     };
 
     const handleImageChange = (e) => {
@@ -195,7 +211,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
             const imgMsg = {
                 content: e.target.files[0].name, sender_id: loginUser?.id, contentType: "img",
                 file_type: file_type, filename: filename, file_url: file_url,
-                file_size: file_size, createdAt: "now"
+                file_size: file_size, createdAt: "now", reaction: null
             };
 
             const postData = {
@@ -213,11 +229,13 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                     .then((response) => {
                         console.log("Replay response:", response);
                         formData.append("newFile_id", response.data.id);
+                        imgMsg['id'] = response.data.id;
                         axios.post(`${url}/file-input-message/${loginUser?.id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                             .then((response) => {
                                 console.log("Response from file 128::", response);
                                 socket.current.emit("img_message", imgMsg);
                             }).catch((err) => console.log("Error::", err))
+
                     })
                     .catch((err) => console.log("Error:", err));
 
@@ -264,12 +282,22 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
     }
 
     const addReaction = (index, em, message) => {
-        setEmojiMsg(index);
+        setReactions((prev) => ({
+            ...prev,
+            [message.id]: { code: em.code, indx: index }
+        }))
         setEmojiView(null);
+
+        const newReaction = {
+            message_id: message.id,
+            sender_id: loginUser?.id,
+            reaction: em.code,
+        };
+
+        socket.current.emit("react_to_message", newReaction);
 
         axios.post(`${url}/add-reaction`, { message_id: message.id, reaction: JSON.stringify({ name: em.name, code: em.code }) }).then((response) => {
             console.log("emoji single response:", response.data);
-            setSingleEmoji(response.data);
         }).catch((err) => console.log(err));
     }
 
@@ -290,7 +318,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                     {receiverUser?.username &&
                         messageList?.map((msg, index) => {
                             let result = null;
-                            if (msg.reply_to_message_id) {
+                            if (msg?.reply_to_message_id) {
                                 result = messageList.find((m) => m.id == msg.reply_to_message_id);
                             }
 
@@ -298,7 +326,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                                 onMouseEnter={() => handleOption(index)}
                                 onMouseLeave={handleMouseLeave}>
 
-                                {msg.reply_to_message_id && <div className={`replay_msg ${msg?.sender_id === loginUser?.id ? "send" : "receive"}`}>{result.content || result.filename} </div>}
+                                {msg.reply_to_message_id && <div className={`replay_msg ${msg?.sender_id === loginUser?.id ? "send" : "receive"}`}>{result?.content || result?.filename} </div>}
 
                                 <div className={`menu ${option != index ? "display" : ''} ${msg?.sender_id === loginUser?.id ? "senderReply" : "receiverReply"}`}>
                                     <div className="menu-item" onClick={() => handleReplay(msg)}>
@@ -311,6 +339,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
 
                                 <div className={`menu ${emojiView != index ? "display" : ''} ${msg?.sender_id === loginUser?.id ? "senderReply" : "receiverReply"}`}>
                                     <div className="menu-item" onMouseEnter={invisible}>
+
                                         {
                                             emoji && emoji?.map((em, idx) => (
                                                 <div key={idx} className="emoji-style" onClick={() => addReaction(index, em, msg)}>
@@ -359,10 +388,13 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                                             }).format(new Date(msg?.createdAt))
                                     }
                                 </div>
+
                                 {
-                                    singleEmoji && emojiMsg == index ?
-                                        <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(singleEmoji?.reaction)?.code}`)}</div> :
-                                        msg.MessageReaction ? <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(msg.MessageReaction?.reaction)?.code}`)}</div> : ''
+                                    msg.id && reactions[msg.id] ? (
+                                        <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${reactions[msg.id].code || msg.reaction}`)}</div>
+                                    ) : msg.MessageReaction ? (
+                                        <div className={`emoji-style-single`}>{String.fromCodePoint(`0x${JSON.parse(msg.MessageReaction?.reaction)?.code}`)}</div>
+                                    ) : ''
                                 }
                             </div>
 
@@ -408,7 +440,7 @@ function MessageArea({ loginUser, receiverUser, url, setCurrChatUser }) {
                                 <input type="text" id="fileMsgInput" className="file-msg-input" name="fileMsgInput" onChange={(e) => handleFileMsgChange(e)} placeholder='write message..' />
                             </div>
                             <div id="fileDetails" className="file-details">
-                                {selectedFile ? selectedFile.name : "No file chosen"}
+                                {selectedFile ? `${selectedFile?.length} Files` : "No file chosen"}
                             </div>
                             <button id="sendFileBtn" className="send-btn" onClick={handleSendFile}>Send</button>
                         </div>
